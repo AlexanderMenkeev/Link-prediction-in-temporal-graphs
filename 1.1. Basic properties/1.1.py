@@ -1,6 +1,6 @@
 
 #f = open('datasets/small-graph.txt', 'r')
-f = open('1.1.Properties_of_network\datasets\out.prosper-loans.txt', 'r') 
+f = open('datasets\small-graph.txt', 'r') 
 
 
 def bfs(adjList, unvisited):
@@ -82,7 +82,7 @@ while len(uniqueVertexes) > 0:
         max_size = size
         max_WCC = WCC
     count += 1
-    #print("WCC", count, "size", WCC_size, ":", WCC)
+    #print("WCC", count, "size", size, ":", WCC)
 
 print("Количество компонент слабой связности: ", count)
 #print("Наибольшая КСС: ", max_WCC)
