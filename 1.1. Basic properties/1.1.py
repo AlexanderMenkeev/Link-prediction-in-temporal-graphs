@@ -1,6 +1,6 @@
 
-#f = open('datasets/small-graph.txt', 'r')
-f = open('datasets\small-graph.txt', 'r') 
+f = open('datasets\out.prosper-loans.txt', 'r')
+#f = open('datasets\small-graph.txt', 'r') 
 
 
 def bfs(adjList, unvisited):
