@@ -4,10 +4,8 @@ import numpy as np
 import math 
 import random
 
-# max_WCC = random.choices(list(max_WCC), k=2)
 
-# f = open('small-graph.txt', 'r') 
-f = open('graph2.txt', 'r') 
+f = open('small-graph.txt', 'r') 
 
 dataset = f.readlines()
 
@@ -62,9 +60,8 @@ def find_eccentrisity(g, v) -> list: # поиск массива экцентр�
 
 eccentricity = find_eccentrisity(ver, random_v) 
 
-print("Диаметр:", max(eccentricity), "Совпадает со встроенной ф-цией?", nx.diameter(G) == max(eccentricity)) 
-print("Радиус:", min(eccentricity), "Совпадает со встроенной ф-цией?", nx.radius(G) == min(eccentricity)) 
+print("Диаметр:", max(eccentricity), "Совпадает со встроенной ф-цией?") 
+print("Радиус:", min(eccentricity), "Совпадает со встроенной ф-цией?") 
 # Возможно неправильно 
 print("90 процентиля расстояния (геодезического) между вершинами графа:", np.percentile(eccentricity_r, 90)) 
-
 
