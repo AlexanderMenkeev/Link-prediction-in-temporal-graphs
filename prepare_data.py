@@ -226,7 +226,7 @@ def prepare_data_at_dist_2(dataset, s = 75, display_interm_results = False):
             y[i] = 1
 
 
-    return [V, qs, adjList, nonexistent_edges, y]
+    return [V, adjList, nonexistent_edges, y]
 
 
 

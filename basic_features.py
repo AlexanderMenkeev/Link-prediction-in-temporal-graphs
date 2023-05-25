@@ -115,13 +115,13 @@ def print_basic_properties(dataset, display_interm_results = False) -> None:
             ver[from_ind].add(to_ind)
             ver[to_ind].add(from_ind) 
         
-    print("подграф с наибольшей КСС: ", ver) 
+    #print("подграф с наибольшей КСС: ", ver) 
 
     n = 5 # кол-во вершин для 2a 
 
     # random_v = random.choices(list(max_WCC), k=n) 
     random_v =random.sample(list(max_WCC), k=n) # мн-во вершин для 2a
-    print('random_v', random_v)
+    #print('random_v', random_v)
 
     def dijkstra_algo(graph, start) -> int:
         d = defaultdict(bool) # расстояние от вершины старт до всех остальных 
@@ -143,7 +143,7 @@ def print_basic_properties(dataset, display_interm_results = False) -> None:
                     curr_v = i
                     min_d = d[i]
 
-        print("Расстояния ", d, "Вершина", start) 
+        #print("Расстояния ", d, "Вершина", start) 
         k = list(d.values())
         return max(k), k
 
@@ -183,7 +183,7 @@ def print_basic_properties(dataset, display_interm_results = False) -> None:
             WCC.add(current_node)
             # check all the neighbour nodes of the current node
             for neighbour_node in adjList[current_node]:
-                to = neighbour_node[0]  # neighbour_node - это tuple(to, weight, time)
+                to = neighbour_node  # neighbour_node - это tuple(to, weight, time)
                 if to in unvisited:
                     unvisited.remove(to)
                     queue.append(to)
@@ -200,14 +200,14 @@ def print_basic_properties(dataset, display_interm_results = False) -> None:
         print("snow-ball component", max_WCC)
         for v in max_WCC:
             for neighbour_node in adjList[v]:
-                if neighbour_node[0] in max_WCC:
-                    edges[v].add(neighbour_node[0])
-                    edges[neighbour_node[0]].add(v)
+                if neighbour_node in max_WCC:
+                    edges[v].add(neighbour_node)
+                    edges[neighbour_node].add(v)
 
         return edges, max_WCC
 
 
-    n = 1000  # любое число больше 2
+    n = 5  # любое число больше 2
 
 #     print("Число вершин в наибольшой компоненте связности: ", len(max_WCC))
     if len(max_WCC) > n:
@@ -220,7 +220,7 @@ def print_basic_properties(dataset, display_interm_results = False) -> None:
 
         print("Диаметр snowball:", max(matrix_of_shortest_paths[0]))
         print("Радиус snowball:", min(matrix_of_shortest_paths[0]))
-        print("90 процентиля расстояния (геодезического) между вершинами графа snowball:", np.percentile(matrix_of_shortest_paths[1], 90))
+        print("90 процентиля расстояния (геодезического) между вершинами графа snowball:", np.percentile(matrix_of_shortest_paths[1], 90))    
 
 
 
