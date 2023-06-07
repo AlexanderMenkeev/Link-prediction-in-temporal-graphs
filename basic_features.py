@@ -40,7 +40,7 @@ def print_basic_properties(dataset, display_interm_results = False) -> None:
     # count number of vertexes
     uniqueVertexes = set()
     for line in dataset:
-        [from_ind, to_ind, weight, time] = [int(x) for x in line.split()]
+        [from_ind, to_ind] = [int(x) for x in line.split()]
         uniqueVertexes.add(from_ind)
         uniqueVertexes.add(to_ind)
     V = len(uniqueVertexes) + 1
@@ -49,7 +49,7 @@ def print_basic_properties(dataset, display_interm_results = False) -> None:
     adjList = [[] for _ in range(V)]
     # transform directed graph to undirected
     for line in dataset:
-        [from_ind, to_ind, weight, time] = [int(x) for x in line.split()]
+        [from_ind, to_ind] = [int(x) for x in line.split()]
         adjList[from_ind].append(to_ind)
         adjList[to_ind].append(from_ind)
 
@@ -101,51 +101,55 @@ def print_basic_properties(dataset, display_interm_results = False) -> None:
     
     ### Пункт 1.2.
 
-    
-
-
-
-
-
     ver = defaultdict(set) # подграф с наибольшей КСС 
 
     for line in dataset:
-        [from_ind, to_ind, weight, time] = [int(x) for x in line.split()]
-        if from_ind in max_WCC:
+        [from_ind, to_ind] = [int(x) for x in line.split()]
+        if (from_ind and to_ind) in max_WCC:
             ver[from_ind].add(to_ind)
             ver[to_ind].add(from_ind) 
         
     #print("подграф с наибольшей КСС: ", ver) 
 
-    n = 5 # кол-во вершин для 2a 
+    n = 1000 # кол-во вершин для 2a 
 
     # random_v = random.choices(list(max_WCC), k=n) 
-    random_v =random.sample(list(max_WCC), k=n) # мн-во вершин для 2a
+    #random_v =random.sample(list(max_WCC), k=n) # мн-во вершин для 2a
     #print('random_v', random_v)
 
-    def dijkstra_algo(graph, start) -> int:
-        d = defaultdict(bool) # расстояние от вершины старт до всех остальных 
-        use = defaultdict(bool)
-        d[start] = 0 
-        min_d = 0 
-        curr_v = start
-        while min_d < math.inf:
-            i = curr_v 
-            use[i] = True 
-            min_d = math.inf 
-            path = d[i] + 1
-            for j in graph[i]: 
-                if (not d[j] and j != start) or path < d[j]:
-                    d[j] = path  
+    def dijkstra_algo(adjList: list[list], start) -> list:
+      min_queue = queue.PriorityQueue()
+      distance = [np.inf] * V
 
-            for i in graph:
-                if not use[i] and (d[i] and d[i] < min_d): 
-                    curr_v = i
-                    min_d = d[i]
+      min_queue.put((0, start))
+      distance[start] = 0
 
-        #print("Расстояния ", d, "Вершина", start) 
-        k = list(d.values())
-        return max(k), k
+      while not min_queue.empty():
+        u = min_queue.get()[1]
+        for v in adjList[u]:
+          weight = 1
+          if distance[v] > distance[u] + weight:
+            distance[v] = distance[u] + weight
+            min_queue.put((distance[v], v))
+
+
+      pairs_of_vertexes = [] # at distance = 2
+      for i in range(start, V):
+        if distance[i] == 2:
+          pairs_of_vertexes.append((start, i))
+
+                # print(i, ":", distance[i])
+
+            # print(pairs_of_vertexes)
+            # print()
+
+      # print('k',distance) 
+      distance[0]=0
+      if np.inf in distance: 
+        distance[distance.index(np.inf)] = 0 
+      # print(distance)     
+      return max(distance), distance
+
 
 
 
@@ -158,15 +162,14 @@ def print_basic_properties(dataset, display_interm_results = False) -> None:
             e_1.append(m[1])
         return e, e_1
 
-    print(ver)
+    #print(ver)
 
-    eccentricity = find_eccentrisity(ver, random_v)
-    print('-------') 
-    matrix_of_shortest_paths = find_eccentrisity(ver, max_WCC)
+    # eccentricity = find_eccentrisity(ver, random_v)
+    # print('-------') 
 
-    print("Диаметр:", max(eccentricity[0]), "Совпадает со встроенной ф-цией?") 
-    print("Радиус:", min(eccentricity[0]), "Совпадает со встроенной ф-цией?") 
-    print("90 процентиля расстояния (геодезического) между вершинами графа:", np.percentile(matrix_of_shortest_paths[1], 90)) 
+    # print("Диаметр:", max(eccentricity[0]), "Совпадает со встроенной ф-цией?") 
+    # print("Радиус:", min(eccentricity[0]), "Совпадает со встроенной ф-цией?") 
+    # print("90 процентиля расстояния (геодезического) между вершинами графа:", np.percentile(eccentricity[1], 90)) 
 
 
     def bfs_snowball(visited, adjList, unvisited, lenght):
@@ -197,7 +200,7 @@ def print_basic_properties(dataset, display_interm_results = False) -> None:
                 max_size = size
                 max_WCC = new_WCC
 
-        print("snow-ball component", max_WCC)
+        #print("snow-ball component", max_WCC)
         for v in max_WCC:
             for neighbour_node in adjList[v]:
                 if neighbour_node in max_WCC:
@@ -207,20 +210,18 @@ def print_basic_properties(dataset, display_interm_results = False) -> None:
         return edges, max_WCC
 
 
-    n = 5  # любое число больше 2
 
-#     print("Число вершин в наибольшой компоненте связности: ", len(max_WCC))
-    if len(max_WCC) > n:
-        random_v = random.sample(list(max_WCC), k=2)
-        edges, new_WCC = bfs_snowball(random_v, adjList, max_WCC, n)
-        print("Snowball: ", edges)
-        print("Size snowball component: ", len(new_WCC))
 
-        matrix_of_shortest_paths = find_eccentrisity(edges, new_WCC)
+    # random_v = random.sample(list(max_WCC), k=2)
+    # edges, new_WCC = bfs_snowball(random_v, adjList, max_WCC, n)
+    # #print("Snowball: ", edges)
+    # print("Size snowball component: ", len(new_WCC))
 
-        print("Диаметр snowball:", max(matrix_of_shortest_paths[0]))
-        print("Радиус snowball:", min(matrix_of_shortest_paths[0]))
-        print("90 процентиля расстояния (геодезического) между вершинами графа snowball:", np.percentile(matrix_of_shortest_paths[1], 90))    
+    # matrix_of_shortest_paths = find_eccentrisity(edges, new_WCC)
+
+    # print("Диаметр snowball:", max(matrix_of_shortest_paths[0]))
+    # print("Радиус snowball:", min(matrix_of_shortest_paths[0]))
+    # print("90 процентиля расстояния (геодезического) между вершинами графа snowball:", np.percentile(matrix_of_shortest_paths[1], 90))    
 
 
 
@@ -302,7 +303,7 @@ def print_basic_properties(dataset, display_interm_results = False) -> None:
     # считываем из датасета список ребер, игнорируя их направленность и дубликаты (вес и время тоже игнорируем)
     edge_list = set()
     for line in dataset:
-        [from_ind, to_ind, weight, time] = [int(x) for x in line.split()]
+        [from_ind, to_ind] = [int(x) for x in line.split()]
         edge_list.add((from_ind, to_ind))
         edge_list.add((to_ind, from_ind))
 
